@@ -1,0 +1,41 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "ImportsExercise.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.17;\n\nimport \"./SillyStringUtils.sol\";\n\ncontract ImportsExercise {\n    // Import the Haiku struct from the library\n    using SillyStringUtils for string;\n    \n    // Public instance of Haiku\n    SillyStringUtils.Haiku public haiku;\n\n    // Events for better UX and logging\n    event HaikuSaved(string line1, string line2, string line3);\n    event HaikuShruggie(string originalLine3, string shruggieVersion);\n\n    // Save three strings as lines of haiku\n    function saveHaiku(string memory _line1, string memory _line2, string memory _line3) public {\n        haiku.line1 = _line1;\n        haiku.line2 = _line2;\n        haiku.line3 = _line3;\n        \n        emit HaikuSaved(_line1, _line2, _line3);\n    }\n\n    // Return the haiku as a Haiku type (not individual members like auto-generated getter)\n    function getHaiku() public view returns (SillyStringUtils.Haiku memory) {\n        return haiku;\n    }\n\n    // Use library to add 🤷 to line3 without modifying original\n    function shruggieHaiku() public view returns (SillyStringUtils.Haiku memory) {\n        // Create a copy of the haiku to avoid modifying the original\n        SillyStringUtils.Haiku memory modifiedHaiku = SillyStringUtils.Haiku({\n            line1: haiku.line1,\n            line2: haiku.line2,\n            line3: SillyStringUtils.shruggie(haiku.line3)\n        });\n        \n        return modifiedHaiku;\n    }\n\n    // Utility functions for better UX and testing\n\n    // Check if haiku is empty\n    function isHaikuEmpty() public view returns (bool) {\n        return (\n            bytes(haiku.line1).length == 0 &&\n            bytes(haiku.line2).length == 0 &&\n            bytes(haiku.line3).length == 0\n        );\n    }\n\n    // Get individual lines (alternative to auto-generated getters)\n    function getLine1() public view returns (string memory) {\n        return haiku.line1;\n    }\n\n    function getLine2() public view returns (string memory) {\n        return haiku.line2;\n    }\n\n    function getLine3() public view returns (string memory) {\n        return haiku.line3;\n    }\n\n    // Clear the haiku\n    function clearHaiku() public {\n        delete haiku;\n    }\n\n    // Get haiku lines as separate strings (for UI convenience)\n    function getHaikuLines() public view returns (string memory, string memory, string memory) {\n        return (haiku.line1, haiku.line2, haiku.line3);\n    }\n\n    // Apply shruggie to any string using the library (demonstration)\n    function applyShruggie(string memory _input) public pure returns (string memory) {\n        return SillyStringUtils.shruggie(_input);\n    }\n\n    // Count total characters in haiku\n    function getHaikuLength() public view returns (uint256) {\n        return bytes(haiku.line1).length + bytes(haiku.line2).length + bytes(haiku.line3).length;\n    }\n\n    // Create a formatted haiku string with line breaks\n    function getFormattedHaiku() public view returns (string memory) {\n        return string.concat(\n            haiku.line1,\n            \"\\n\",\n            haiku.line2, \n            \"\\n\",\n            haiku.line3\n        );\n    }\n\n    // Create a shruggie version of the entire haiku (all lines get 🤷)\n    function getFullShruggieHaiku() public view returns (SillyStringUtils.Haiku memory) {\n        return SillyStringUtils.Haiku({\n            line1: SillyStringUtils.shruggie(haiku.line1),\n            line2: SillyStringUtils.shruggie(haiku.line2),\n            line3: SillyStringUtils.shruggie(haiku.line3)\n        });\n    }\n\n    // Compare two haikus for equality\n    function compareHaiku(SillyStringUtils.Haiku memory _other) public view returns (bool) {\n        return (\n            keccak256(abi.encodePacked(haiku.line1)) == keccak256(abi.encodePacked(_other.line1)) &&\n            keccak256(abi.encodePacked(haiku.line2)) == keccak256(abi.encodePacked(_other.line2)) &&\n            keccak256(abi.encodePacked(haiku.line3)) == keccak256(abi.encodePacked(_other.line3))\n        );\n    }\n\n    // Constructor to optionally initialize with a haiku\n    constructor() {\n        // Start with an empty haiku\n    }\n\n    // Alternative constructor-like function to initialize with data\n    function initializeHaiku(string memory _line1, string memory _line2, string memory _line3) public {\n        saveHaiku(_line1, _line2, _line3);\n    }\n}"
+    },
+    "SillyStringUtils.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.17;\n\nlibrary SillyStringUtils {\n    struct Haiku {\n        string line1;\n        string line2;\n        string line3;\n    }\n\n    function shruggie(string memory _input) internal pure returns (string memory) {\n        return string.concat(_input, unicode\" 🤷\");\n    }\n}"
+    }
+  },
+  "settings": {
+    "remappings": [],
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "metadata": {
+      "useLiteralContent": false,
+      "bytecodeHash": "ipfs"
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode.object",
+          "evm.bytecode.sourceMap",
+          "evm.bytecode.linkReferences",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.sourceMap",
+          "evm.deployedBytecode.linkReferences",
+          "evm.deployedBytecode.immutableReferences",
+          "evm.methodIdentifiers",
+          "metadata"
+        ]
+      }
+    },
+    "evmVersion": "london",
+    "viaIR": false,
+    "libraries": {}
+  }
+}
